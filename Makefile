@@ -1,4 +1,4 @@
 all: build
 
 build:
-	clang -Wall -Wextra -std=gnu11 -o visort visort.c -lraylib -lpthread
+	gcc -Wall -Wextra -std=gnu11 -fuse-ld=mold -o ./build/visort visort.c -lraylib -lpthread
