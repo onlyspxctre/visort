@@ -12,7 +12,7 @@
 #define WIDTH 800
 #define HEIGHT 600
 
-#define N 16384
+#define N WIDTH
 
 struct Rect {
     float width;
@@ -40,14 +40,13 @@ void* sort(void* packet) {
         };
     }
 
-    seesort_quicksort(data, 0, N);
+    visort_quicksort(data, 0, N);
 
     printf("DONE\n");
     return NULL;
 }
 
 int main(void) {
-
     pthread_t thread;
     pthread_create(&thread, NULL, &sort, NULL);
     pthread_detach(thread);
@@ -61,28 +60,37 @@ int main(void) {
             for (size_t i = 0; i < WIDTH; ++i) {
                 size_t idx = (size_t) (((float) i / WIDTH) * N);
                 const float height = ((float) data[idx] / (float) max) * HEIGHT;
-                DrawRectangleRec((Rectangle) {
-                                     (float) idx * rects[idx].width,
-                                     (float) HEIGHT - height,
-                                     1,
-                                     height,
-                                 },
-                                 (Color) {255, 255, 255, 255});
+                DrawRectangleRec(
+                    (Rectangle) {
+                        (float) idx * rects[idx].width,
+                        (float) HEIGHT - height,
+                        1,
+                        height,
+                    },
+                    (Color) {255, 255, 255, 255});
             }
-        }
-        else {
+        } else {
             for (size_t i = 0; i < N; ++i) {
                 const float height = ((float) data[i] / (float) max) * HEIGHT;
-                DrawRectangleRec((Rectangle) {
-                                     (float) i * rects[i].width,
-                                     (float) HEIGHT - height,
-                                     rects[i].width,
-                                     height,
-                                 },
-                                 (Color) {255, 255, 255, 255});
-
+                DrawRectangleRec(
+                    (Rectangle) {
+                        (float) i * rects[i].width,
+                        (float) HEIGHT - height,
+                        rects[i].width,
+                        height,
+                    },
+                    (Color) {255, 255, 255, 255});
             }
         }
+
+        DrawRectangleRec(
+            (Rectangle) {
+                (float) visort_redbar,
+                0,
+                1,
+                HEIGHT,
+            },
+            (Color) {255, 0, 0, 255});
 
         ClearBackground(BLACK);
         EndDrawing();

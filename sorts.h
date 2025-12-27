@@ -7,6 +7,8 @@
 
 static int visort_seeded = 0;
 
+int visort_redbar = -1;
+
 size_t find_max(const atomic_int* data, const size_t n) {
     size_t idx = 0;
 
@@ -49,28 +51,13 @@ void shuffle(atomic_int* data, const size_t n) {
     }
 }
 
-void selection_sort(int* data, const size_t n) {
-    size_t min_idx;
-
-    for (size_t i = 0; i < n; ++i) {
-        min_idx = i;
-        for (size_t j = i + 1; j < n; ++j) {
-            if (data[j] < data[min_idx]) {
-                min_idx = j;
-            }
-        }
-
-        swap_xor(&data[i], &data[min_idx]);
-    }
-}
-
 void visort_quicksort(atomic_int* data, const size_t l, const size_t r) {
     if ((r - l) < 1)
         return;
 
     struct timespec delay = {
         .tv_sec = 0,
-        .tv_nsec = (long) (0.001 * 1000000), // ms
+        .tv_nsec = (long) (2 * 1000000), // ms
     };
     size_t pivot = l;
 
@@ -80,24 +67,11 @@ void visort_quicksort(atomic_int* data, const size_t l, const size_t r) {
             swap(int, data[i], data[pivot]);
             ++pivot;
             swap(int, data[i], data[pivot]);
+
+            visort_redbar = (int) i;
         }
     }
 
     visort_quicksort(data, l, pivot);
     visort_quicksort(data, pivot + 1, r);
-}
-
-void counting_sort(int* data, const size_t n) {
-    int count[10] = {0};
-
-    for (size_t i = 0; i < n; ++i) {
-        ++count[data[i]];
-    }
-
-    size_t idx = 0;
-    for (int i = 0; i < 10; ++i) {
-        for (int c = 0; c < count[i]; ++c) {
-            data[idx++] = i;
-        }
-    }
 }
