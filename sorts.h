@@ -59,16 +59,33 @@ void visort_quicksort(atomic_int* data, const size_t l, const size_t r) {
         .tv_sec = 0,
         .tv_nsec = (long) (2 * 1000000), // ms
     };
-    size_t pivot = l;
+    size_t pivot = l + (r - l) / 2;
 
-    for (size_t i = l + 1; i < r; ++i) {
+    size_t i = l;
+    while (i < pivot) {
+        nanosleep(&delay, NULL); 
+
+        if (data[i] > data[pivot]) {
+            swap(int, data[i], data[pivot]);
+            --pivot;
+            swap(int, data[i], data[pivot]);
+        }
+        else {
+            ++i;
+        }
+    }
+
+    i = r;
+    while (i > pivot) {
         nanosleep(&delay, NULL);
+
         if (data[i] < data[pivot]) {
             swap(int, data[i], data[pivot]);
             ++pivot;
             swap(int, data[i], data[pivot]);
-
-            visort_redbar = (int) i;
+        }
+        else {
+            --i;
         }
     }
 
